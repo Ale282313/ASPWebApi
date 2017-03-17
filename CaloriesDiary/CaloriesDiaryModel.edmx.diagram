@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="22d30b7753c348bcb0749d94157ff8d3" Name="Diagram1">
+        <EntityTypeShape EntityType="CaloriesDiaryModel.Diary" Width="1.5" PointX="3.75" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="CaloriesDiaryModel.DiaryEntry" Width="1.5" PointX="3.375" PointY="4" IsExpanded="true" />
+        <EntityTypeShape EntityType="CaloriesDiaryModel.Food" Width="1.5" PointX="0.875" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="CaloriesDiaryModel.Measure" Width="1.5" PointX="0.75" PointY="5" IsExpanded="true" />
+        <AssociationConnector Association="CaloriesDiaryModel.FK_dbo_Diary_dbo_DiaryEntry" ManuallyRouted="false" />
+        <AssociationConnector Association="CaloriesDiaryModel.FK_dbo_Measure_dbo_DiaryEntry" ManuallyRouted="false" />
+        <AssociationConnector Association="CaloriesDiaryModel.FK_dbo_Food_dbo_Measure" ManuallyRouted="false" />
+        <AssociationConnector Association="CaloriesDiaryModel.Food_DiaryEntry_FK" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

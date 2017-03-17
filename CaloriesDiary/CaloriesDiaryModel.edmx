@@ -1,0 +1,306 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="CaloriesDiaryModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Diary">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="date" Type="datetime" Nullable="false" />
+          <Property Name="username" Type="nvarchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="DiaryEntry">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="quantity" Type="int" />
+          <Property Name="foodid" Type="int" Nullable="false" />
+          <Property Name="diaryid" Type="int" Nullable="false" />
+          <Property Name="measureid" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Food">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="description" Type="nvarchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="Measure">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="description" Type="nvarchar" MaxLength="200" />
+          <Property Name="calories" Type="int" />
+          <Property Name="fat" Type="int" Nullable="false" />
+          <Property Name="foodid" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_dbo_Diary_dbo_DiaryEntry">
+          <End Role="Diary" Type="Self.Diary" Multiplicity="1" />
+          <End Role="DiaryEntry" Type="Self.DiaryEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Diary">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="DiaryEntry">
+              <PropertyRef Name="diaryid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Food_dbo_Measure">
+          <End Role="Food" Type="Self.Food" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Measure" Type="Self.Measure" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Food">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Measure">
+              <PropertyRef Name="foodid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Measure_dbo_DiaryEntry">
+          <End Role="Measure" Type="Self.Measure" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="DiaryEntry" Type="Self.DiaryEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Measure">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="DiaryEntry">
+              <PropertyRef Name="measureid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Food_DiaryEntry_FK">
+          <End Role="Food" Type="Self.Food" Multiplicity="1" />
+          <End Role="DiaryEntry" Type="Self.DiaryEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Food">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="DiaryEntry">
+              <PropertyRef Name="foodid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="CaloriesDiaryModelStoreContainer">
+          <EntitySet Name="Diary" EntityType="Self.Diary" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DiaryEntry" EntityType="Self.DiaryEntry" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Food" EntityType="Self.Food" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Measure" EntityType="Self.Measure" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_dbo_Diary_dbo_DiaryEntry" Association="Self.FK_dbo_Diary_dbo_DiaryEntry">
+            <End Role="Diary" EntitySet="Diary" />
+            <End Role="DiaryEntry" EntitySet="DiaryEntry" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Food_dbo_Measure" Association="Self.FK_dbo_Food_dbo_Measure">
+            <End Role="Food" EntitySet="Food" />
+            <End Role="Measure" EntitySet="Measure" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Measure_dbo_DiaryEntry" Association="Self.FK_dbo_Measure_dbo_DiaryEntry">
+            <End Role="Measure" EntitySet="Measure" />
+            <End Role="DiaryEntry" EntitySet="DiaryEntry" />
+          </AssociationSet>
+          <AssociationSet Name="Food_DiaryEntry_FK" Association="Self.Food_DiaryEntry_FK">
+            <End Role="Food" EntitySet="Food" />
+            <End Role="DiaryEntry" EntitySet="DiaryEntry" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="CaloriesDiaryModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Diary">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="date" Type="DateTime" Nullable="false" />
+          <Property Name="username" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="DiaryEntries" Relationship="Self.FK_dbo_Diary_dbo_DiaryEntry" FromRole="Diary" ToRole="DiaryEntry" />
+        </EntityType>
+        <EntityType Name="DiaryEntry">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="quantity" Type="Int32" />
+          <Property Name="foodid" Type="Int32" Nullable="false" />
+          <Property Name="diaryid" Type="Int32" Nullable="false" />
+          <Property Name="measureid" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Diary" Relationship="Self.FK_dbo_Diary_dbo_DiaryEntry" FromRole="DiaryEntry" ToRole="Diary" />
+          <NavigationProperty Name="Measure" Relationship="Self.FK_dbo_Measure_dbo_DiaryEntry" FromRole="DiaryEntry" ToRole="Measure" />
+          <NavigationProperty Name="Food" Relationship="CaloriesDiaryModel.Food_DiaryEntry_FK" FromRole="DiaryEntry" ToRole="Food" />
+        </EntityType>
+        <EntityType Name="Food">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="description" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Measures1" Relationship="Self.FK_dbo_Food_dbo_Measure" FromRole="Food" ToRole="Measure" />
+          <NavigationProperty Name="DiaryEntries" Relationship="CaloriesDiaryModel.Food_DiaryEntry_FK" FromRole="Food" ToRole="DiaryEntry" />
+        </EntityType>
+        <EntityType Name="Measure">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="description" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="calories" Type="Int32" />
+          <Property Name="fat" Type="Int32" Nullable="false" />
+          <Property Name="foodid" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="DiaryEntries" Relationship="Self.FK_dbo_Measure_dbo_DiaryEntry" FromRole="Measure" ToRole="DiaryEntry" />
+          <NavigationProperty Name="Food" Relationship="Self.FK_dbo_Food_dbo_Measure" FromRole="Measure" ToRole="Food" />
+        </EntityType>
+        <Association Name="FK_dbo_Diary_dbo_DiaryEntry">
+          <End Role="Diary" Type="Self.Diary" Multiplicity="1" />
+          <End Role="DiaryEntry" Type="Self.DiaryEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Diary">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="DiaryEntry">
+              <PropertyRef Name="diaryid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Measure_dbo_DiaryEntry">
+          <End Role="Measure" Type="Self.Measure" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="DiaryEntry" Type="Self.DiaryEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Measure">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="DiaryEntry">
+              <PropertyRef Name="measureid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Food_dbo_Measure">
+          <End Role="Food" Type="Self.Food" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Measure" Type="Self.Measure" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Food">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="Measure">
+              <PropertyRef Name="foodid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="CaloriesDiaryEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Diaries" EntityType="Self.Diary" />
+          <EntitySet Name="DiaryEntries" EntityType="Self.DiaryEntry" />
+          <EntitySet Name="Foods" EntityType="Self.Food" />
+          <EntitySet Name="Measures" EntityType="Self.Measure" />
+          <AssociationSet Name="FK_dbo_Diary_dbo_DiaryEntry" Association="Self.FK_dbo_Diary_dbo_DiaryEntry">
+            <End Role="Diary" EntitySet="Diaries" />
+            <End Role="DiaryEntry" EntitySet="DiaryEntries" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Measure_dbo_DiaryEntry" Association="Self.FK_dbo_Measure_dbo_DiaryEntry">
+            <End Role="Measure" EntitySet="Measures" />
+            <End Role="DiaryEntry" EntitySet="DiaryEntries" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Food_dbo_Measure" Association="Self.FK_dbo_Food_dbo_Measure">
+            <End Role="Food" EntitySet="Foods" />
+            <End Role="Measure" EntitySet="Measures" />
+          </AssociationSet>
+          <AssociationSet Name="Food_DiaryEntry_FK" Association="CaloriesDiaryModel.Food_DiaryEntry_FK">
+            <End Role="Food" EntitySet="Foods" />
+            <End Role="DiaryEntry" EntitySet="DiaryEntries" />
+          </AssociationSet>
+        </EntityContainer>
+        <Association Name="Food_DiaryEntry_FK">
+          <End Type="CaloriesDiaryModel.Food" Role="Food" Multiplicity="1" />
+          <End Type="CaloriesDiaryModel.DiaryEntry" Role="DiaryEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Food">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="DiaryEntry">
+              <PropertyRef Name="foodid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="CaloriesDiaryModelStoreContainer" CdmEntityContainer="CaloriesDiaryEntities">
+          <EntitySetMapping Name="Diaries">
+            <EntityTypeMapping TypeName="CaloriesDiaryModel.Diary">
+              <MappingFragment StoreEntitySet="Diary">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="username" ColumnName="username" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DiaryEntries">
+            <EntityTypeMapping TypeName="CaloriesDiaryModel.DiaryEntry">
+              <MappingFragment StoreEntitySet="DiaryEntry">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="quantity" ColumnName="quantity" />
+                <ScalarProperty Name="foodid" ColumnName="foodid" />
+                <ScalarProperty Name="diaryid" ColumnName="diaryid" />
+                <ScalarProperty Name="measureid" ColumnName="measureid" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Foods">
+            <EntityTypeMapping TypeName="CaloriesDiaryModel.Food">
+              <MappingFragment StoreEntitySet="Food">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="description" ColumnName="description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Measures">
+            <EntityTypeMapping TypeName="CaloriesDiaryModel.Measure">
+              <MappingFragment StoreEntitySet="Measure">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="calories" ColumnName="calories" />
+                <ScalarProperty Name="fat" ColumnName="fat" />
+                <ScalarProperty Name="foodid" ColumnName="foodid" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
