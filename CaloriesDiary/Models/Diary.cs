@@ -7,7 +7,7 @@ namespace CaloriesDiary.Models
 {
 	public class Diary
 	{
-		public string Url { get; set; }
+		public ICollection<Link> Links { get; set; }
 		public DateTime Date { get; set; }
 		public string Username { get; set; }
 		public IEnumerable<DiaryEntry> Entries { get; set; }

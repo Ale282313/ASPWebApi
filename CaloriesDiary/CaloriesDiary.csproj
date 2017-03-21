@@ -246,6 +246,7 @@
     <Compile Include="Models\DiaryEntry.cs" />
     <Compile Include="Models\DiarySummary.cs" />
     <Compile Include="Models\Food.cs" />
+    <Compile Include="Models\Link.cs" />
     <Compile Include="Models\Measure.cs" />
     <Compile Include="Models\ModelFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

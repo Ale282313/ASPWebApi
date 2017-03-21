@@ -1,6 +1,7 @@
 ﻿using CaloriesDiary.Repository;
 using CaloriesDiary.Services;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Web.Http.Routing;
@@ -13,7 +14,7 @@ namespace CaloriesDiary.Models
 		private IRepository _repo;
 		private IIdentityService _identifyService;
 
-		public ModelFactory(HttpRequestMessage request, IRepository repo,IIdentityService service)
+		public ModelFactory(HttpRequestMessage request, IRepository repo, IIdentityService service)
 		{
 			_urlHelper = new UrlHelper(request);
 			_repo = repo;
@@ -23,22 +24,40 @@ namespace CaloriesDiary.Models
 		{
 			return new Diary()
 			{
-				Url = _urlHelper.Link("Diaries", new { id = d.date.ToString("yyyy-MM-dd") }),
+				Links = new List<Link>()
+				{
+					CreateLink(_urlHelper.Link("Diaries", new { id = d.date.ToString("yyyy-MM-dd") }),"self"),
+					CreateLink(_urlHelper.Link("Entries", new { diaryid = d.date.ToString("yyyy-MM-dd") }),"newDiaryEntry","POST")
+				},
 				Date = d.date,
 				Username = d.username,
 				Entries = d.DiaryEntries.Select(de => Create(de))
 
 			};
 		}
+
+		public Link CreateLink(string href, string rel, string method = "GET", bool isTemplated = false)
+		{
+			return new Link
+			{
+				Href = href,
+				Rel = rel,
+				Method = method,
+				IsTemplated = isTemplated
+			};
+		}
+
 		internal DiaryEntry Create(CaloriesDiary.DiaryEntry d)
 		{
 			return new DiaryEntry()
 			{
-				Url = _urlHelper.Link("Entries", new { diaryid = d.Diary.date.ToString("yyyy-MM-dd"), id = d.id }),
+				Links = new List<Link>()
+				{
+					CreateLink(_urlHelper.Link("Entries", new { diaryid = d.Diary.date.ToString("yyyy-MM-dd"), id = d.id }),"self")
+				},
 				Quantity = d.quantity ?? 0,
-				MeasureUrl = Create(d.Measure).Url,
-				FoodUrl = Create(d.Food).Url
-
+				FoodLink = CreateLink(_urlHelper.Link("Foods", new { id = d.Food.id }), "self"),
+				MeasureLink = CreateLink(_urlHelper.Link("Measures", new { foodid = d.Food.id, id = d.measureid }), "self")
 			};
 		}
 
@@ -54,7 +73,10 @@ namespace CaloriesDiary.Models
 		{
 			return new Food()
 			{
-				Url = _urlHelper.Link("Foods", new { id = f.id }),
+				Links = new List<Link>()
+				{
+					CreateLink(_urlHelper.Link("Foods", new { id = f.id }),"self")
+				},
 				Description = f.description,
 				Measures = f.Measures1.Select(m => Create(m))
 			};
@@ -64,7 +86,10 @@ namespace CaloriesDiary.Models
 		{
 			return new Measure()
 			{
-				Url = _urlHelper.Link("Measures", new { foodid = m.Food.id, id = m.id }),
+				Links = new List<Link>()
+				{
+					CreateLink(_urlHelper.Link("Measures", new { foodid = m.Food.id, id = m.id }),"self")
+				},
 				Calories = m.calories ?? 0,
 				Fat = m.fat,
 				Description = m.description
@@ -80,9 +105,11 @@ namespace CaloriesDiary.Models
 				{
 					entry.quantity = model.Quantity;
 				}
-				if (!string.IsNullOrWhiteSpace(model.MeasureUrl))
+
+
+				if (!string.IsNullOrWhiteSpace(model.MeasureLink.Href))
 				{
-					var uri = new Uri(model.MeasureUrl);
+					var uri = new Uri(model.MeasureLink.Href);
 					var measureid = int.Parse(uri.Segments.Last());
 					var measure = _repo.getMeasure(measureid);
 					entry.Measure = measure;
@@ -101,9 +128,15 @@ namespace CaloriesDiary.Models
 			try
 			{
 				var entry = new CaloriesDiary.Diary();
-				if (model.Date != default(DateTime))
+				var selflink = model.Links.Where(l => l.Rel == "self").FirstOrDefault();
+				if (selflink != null && !string.IsNullOrWhiteSpace(selflink.Href))
 				{
-					entry.date = model.Date;
+					var uri = new Uri(selflink.Href);
+					entry.id = int.Parse(uri.Segments.Last());
+					if (model.Date != default(DateTime))
+					{
+						entry.date = model.Date;
+					}
 				}
 				entry.username = _identifyService.CurrentUser;
 				return entry;

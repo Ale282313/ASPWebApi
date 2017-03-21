@@ -29,8 +29,15 @@ namespace CaloriesDiary.Controllers
 			var totalCount = baseQuery.Count();
 			var totalPages = Math.Ceiling((double)totalCount / _pageSize);
 			var _helper = new UrlHelper(this.Request);
-			var prevUrl = page > 0 ? _helper.Link("Foods", new { page = page - 1 }):"";
-			var nextUrl = page< totalPages -1 ?_helper.Link("Foods", new { page = page + 1 }): "";
+			List<Link> links = new List<Link>();
+			if (page > 0)
+			{
+				links.Add(TheModelFactory.CreateLink(_helper.Link("Foods", new { page = page - 1 }), "prevPage"));
+			}
+			if (page < totalPages - 1)
+			{
+				links.Add(TheModelFactory.CreateLink(_helper.Link("Foods", new { page = page + 1 }), "nextPage"));
+			}
 
 			var result = baseQuery.
 				Skip(_pageSize * page).
@@ -40,11 +47,10 @@ namespace CaloriesDiary.Controllers
 
 			return new
 			{
-				Result = result,
 				TotalCount = totalCount,
 				Pages = totalPages,
-				PrevPage = prevUrl,
-				NextPage = nextUrl
+				Links = links,
+				Result = result
 			};
 		}
 

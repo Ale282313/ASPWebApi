@@ -7,10 +7,10 @@ namespace CaloriesDiary.Models
 {
 	public class DiaryEntry
 	{
-		public string Url { get; set; }
+		public ICollection<Link> Links { get; set; }
 		public int Quantity { get; set; }
 
-		public string FoodUrl { get; set; }
-		public string MeasureUrl { get; set; }
+		public Link FoodLink { get; set; }
+		public Link MeasureLink { get; set; }
 	}
 }
