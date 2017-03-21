@@ -8,6 +8,7 @@ using System.Web.Http.Routing;
 
 namespace CaloriesDiary.Controllers
 {
+	[RoutePrefix("api/foods")]
 	public class FoodsController : BaseApiController
 	{
 		public FoodsController(IRepository repo) : base(repo)
@@ -15,6 +16,7 @@ namespace CaloriesDiary.Controllers
 
 		}
 		const int _pageSize = 1;
+		[Route("",Name ="Foodss")] // for the nextPage link
 		public object Get(bool includeMeasures = true, int page = 0)
 		{
 			IQueryable<Food> query;
@@ -32,11 +34,11 @@ namespace CaloriesDiary.Controllers
 			List<Link> links = new List<Link>();
 			if (page > 0)
 			{
-				links.Add(TheModelFactory.CreateLink(_helper.Link("Foods", new { page = page - 1 }), "prevPage"));
+				links.Add(TheModelFactory.CreateLink(_helper.Link("Foodss", new { page = page - 1 }), "prevPage"));
 			}
 			if (page < totalPages - 1)
 			{
-				links.Add(TheModelFactory.CreateLink(_helper.Link("Foods", new { page = page + 1 }), "nextPage"));
+				links.Add(TheModelFactory.CreateLink(_helper.Link("Foodss", new { page = page + 1 }), "nextPage"));
 			}
 
 			var result = baseQuery.
@@ -53,11 +55,11 @@ namespace CaloriesDiary.Controllers
 				Result = result
 			};
 		}
-
-		public Models.Food Get(int id)
+		[Route("{id}", Name ="Foods")] // to give a name to the r
+		public IHttpActionResult Get(int id)
 		{
 			var food = TheRepository.getFoodItem(id);
-			return TheModelFactory.Create(food);
+			return Versioned(TheModelFactory.Create(food));
 		}
 	}
 }

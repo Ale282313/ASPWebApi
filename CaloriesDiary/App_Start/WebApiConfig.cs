@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Web.Http;
-
+using System.Web.Http.Cors;
 
 namespace CaloriesDiary.App_Start
 {
@@ -19,11 +19,6 @@ namespace CaloriesDiary.App_Start
 			// Web API routes
 			config.MapHttpAttributeRoutes();
 
-			config.Routes.MapHttpRoute(
-				name: "DefaultApi",
-				routeTemplate: "api/{controller}/{id}",
-				defaults: new { id = RouteParameter.Optional }
-			);
 			config.Routes.MapHttpRoute(
 				name: "Diaries",
 				routeTemplate: "api/diaries/{id}",
@@ -39,11 +34,11 @@ namespace CaloriesDiary.App_Start
 				routeTemplate: "api/diaries/{diaryid}/entries/{id}",
 				defaults: new { controller = "diaryentries", id = RouteParameter.Optional }
 			);
-			config.Routes.MapHttpRoute(
-				name: "Foods",
-				routeTemplate: "api/foods/{id}",
-				defaults: new { controller = "foods", id = RouteParameter.Optional }
-			);
+			//config.Routes.MapHttpRoute(
+			//	name: "Foods",
+			//	routeTemplate: "api/foods/{id}",
+			//	defaults: new { controller = "foods", id = RouteParameter.Optional }
+			//);
 			config.Routes.MapHttpRoute(
 				name: "Measures",
 				routeTemplate: "api/foods/{foodid}/measures/{id}",
@@ -70,6 +65,10 @@ namespace CaloriesDiary.App_Start
 			var cacheHandler = new CachingHandler(config,eTagStore);
 			cacheHandler.AddLastModifiedHeader = false;
 			config.MessageHandlers.Add(cacheHandler);
+
+			// Add support for CORS -cross origin resource sharing
+			var attr = new EnableCorsAttribute("*","*","GET"); // for hole project
+			config.EnableCors(attr);
 		}
 	}
 		
