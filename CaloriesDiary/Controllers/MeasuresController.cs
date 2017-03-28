@@ -11,12 +11,12 @@ namespace CaloriesDiary.Controllers
 		}
 		public IEnumerable<Models.Measure> Get(int foodid)
 		{
-			var results = TheRepository.getMeasuresForFood(foodid).ToList().Select(m =>TheModelFactory.Create(m));
+			var results = TheRepository.getMeasuresForFood(foodid).ToList().Select(m => TheModelFactory.Create(m));
 			return results;
 		}
-		public Models.Measure Get(int foodid,int id)
+		public Models.Measure Get(int foodid, int id, int id1)
 		{
-			return TheModelFactory.Create(TheRepository.getSpecificMeasureforFood(foodid, id));
+			return TheModelFactory.Create(TheRepository.getSpecificMeasureforFood1(foodid, id, id1));
 		}
 	}
 }

@@ -1,11 +1,16 @@
 ﻿using CacheCow.Server;
 using CacheCow.Server.EntityTagStore.SqlServer;
+using Microsoft.Data.Edm;
 using Newtonsoft.Json.Serialization;
 using System.Linq;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using System.Web.Http.OData.Batch;
+using System.Web.Http.OData.Builder;
+using System.Web.Http.OData.Extensions;
+
 
 namespace CaloriesDiary.App_Start
 {
@@ -18,12 +23,17 @@ namespace CaloriesDiary.App_Start
 
 			// Web API routes
 			config.MapHttpAttributeRoutes();
+			//OData
+			config.AddODataQueryFilter();
+			config.Routes.MapODataServiceRoute("odata", null, GetEdmModel(), new DefaultODataBatchHandler(GlobalConfiguration.DefaultServer));
+			config.EnsureInitialized();
 
-			config.Routes.MapHttpRoute(
-				name: "Diaries",
-				routeTemplate: "api/diaries/{id}",
-				defaults: new { controller = "diaries", id = RouteParameter.Optional }
-			);
+
+			//config.Routes.MapHttpRoute(
+			//	name: "Diaries",
+			//	routeTemplate: "api/diaries/{id}",
+			//	defaults: new { controller = "diaries", id = RouteParameter.Optional }
+			//);
 			config.Routes.MapHttpRoute(
 				name: "DiarySummary",
 				routeTemplate: "api/diaries/{id}/summary",
@@ -39,10 +49,15 @@ namespace CaloriesDiary.App_Start
 			//	routeTemplate: "api/foods/{id}",
 			//	defaults: new { controller = "foods", id = RouteParameter.Optional }
 			//);
+			//config.Routes.MapHttpRoute(
+			//	name: "Measures",
+			//	routeTemplate: "api/foods/{foodid}/measures/{id}",
+			//	defaults: new { controller = "measures", id = RouteParameter.Optional }
+			//)
 			config.Routes.MapHttpRoute(
 				name: "Measures",
-				routeTemplate: "api/foods/{foodid}/measures/{id}",
-				defaults: new { controller = "measures", id = RouteParameter.Optional }
+				routeTemplate: "api/foods/{foodid}/measures/{id}/{id1}",
+				defaults: new { controller = "measures", id = RouteParameter.Optional, id1 = RouteParameter.Optional }
 			);
 			config.Formatters.JsonFormatter.SupportedMediaTypes
 	.Add(new MediaTypeHeaderValue("application/json"));
@@ -70,6 +85,16 @@ namespace CaloriesDiary.App_Start
 			var attr = new EnableCorsAttribute("*","*","GET"); // for hole project
 			config.EnableCors(attr);
 		}
+		private static IEdmModel GetEdmModel()
+		{
+			ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
+			builder.Namespace = "CaloriesDiary";
+			builder.ContainerName = "DefaultContainer";
+			builder.EntitySet<Diary>("Diaries");
+			var edmModel = builder.GetEdmModel();
+			return edmModel;
+		}
 	}
-		
+	
+
 }

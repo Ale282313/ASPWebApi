@@ -1,13 +1,12 @@
-﻿using CaloriesDiary.Models;
-using CaloriesDiary.Repository;
+﻿using CaloriesDiary.Repository;
 using CaloriesDiary.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading;
 using System.Web.Http;
+using System.Web.Http.OData;
 
 namespace CaloriesDiary.Controllers
 {
@@ -19,24 +18,22 @@ namespace CaloriesDiary.Controllers
 		{
 			_identityService = identityService;
 		}
-
-		public IEnumerable<Models.Diary> Get()
+		[EnableQuery] // install package Install-Package Microsoft.AspNet.WebApi.OData -Version 5.3.1
+		public IQueryable<Models.Diary> Get()
 		{
-			var username = _identityService.CurrentUser;
-			var diaries = TheRepository.getDiaries(username).
-				ToList().
-				Select(d => TheModelFactory.Create(d));
+			var _username = _identityService.CurrentUser;
+			var diaries =TheRepository.getDiaries(_username);
 			return diaries;
 		}
 		public HttpResponseMessage Get(DateTime id)
 		{
 			var username = _identityService.CurrentUser;
-			var result  = TheRepository.getDiaryItem(username,id);
-			if(result == null)
+			var result = TheRepository.getDiaryItem(username, id);
+			if (result == null)
 			{
 				return Request.CreateResponse(HttpStatusCode.NotFound);
 			}
-			return Request.CreateResponse(HttpStatusCode.OK,TheModelFactory.Create(result));
+			return Request.CreateResponse(HttpStatusCode.OK, TheModelFactory.Create(result));
 		}
 		public HttpResponseMessage Post([FromBody]Models.Diary model)
 		{
@@ -48,7 +45,7 @@ namespace CaloriesDiary.Controllers
 					return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Could not create diary in body");
 				}
 				// Make sure that entry is not duplicate
-				if (TheRepository.getDiaries(_identityService.CurrentUser).Any(d=>d.date == entity.date))
+				if (TheRepository.getDiaries(_identityService.CurrentUser).Any(d => d.Date == entity.date))
 				{
 					return Request.CreateErrorResponse(HttpStatusCode.BadRequest, " duplicate diary not allowed");
 				}
@@ -66,14 +63,14 @@ namespace CaloriesDiary.Controllers
 			catch (Exception ex)
 			{
 
-				return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Exception from catch!!!!!!!!!"+ex.StackTrace);
+				return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Exception from catch!!!!!!!!!" + ex.StackTrace);
 			}
 		}
 		public HttpResponseMessage Delete(DateTime id)
 		{
 			try
 			{
-				if (!TheRepository.getDiaries(_identityService.CurrentUser).Any(e => e.date == id))
+				if (!TheRepository.getDiaries(_identityService.CurrentUser).Any(e => e.Date == id))
 					return Request.CreateResponse(HttpStatusCode.NotFound);
 				if (TheRepository.DeleteDiary(id))
 				{

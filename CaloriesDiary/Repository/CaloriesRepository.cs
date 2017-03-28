@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System;
+using CaloriesDiary.Models;
+using System.Web.Http.Routing;
 
 namespace CaloriesDiary.Repository
 {
@@ -75,19 +77,22 @@ namespace CaloriesDiary.Repository
 			}
 		}
 
-		public IEnumerable<Diary> getDiaries(string username)
+		public IQueryable<Models.Diary> getDiaries(string username)
 		{
 			using (var conn = new SqlConnection(connection))
-			{
-
+			{ 
 				conn.Open();
-				var diaries = from d in db.Diaries
-							  where d.username == username
-							  select d;
+				var diaries = db.Diaries.AsQueryable().Where(d => d.username == username).
+							  Select(d => new Models.Diary()
+							  {
+								  Date = d.date,
+								  Username = username
+							  });
+
 				conn.Close();
 				return diaries;
 			}
-
+			
 		}
 
 		public Diary getDiary(string username, DateTime id)
@@ -211,6 +216,22 @@ namespace CaloriesDiary.Repository
 							  where f.id == foodid
 							  join m in db.Measures on f.id equals m.foodid
 							  where m.id == id
+							  select m;
+				conn.Close();
+				return measure.Single();
+			}
+		}
+
+		public Measure getSpecificMeasureforFood1(int foodid, int id, int id1)
+		{
+			using (var conn = new SqlConnection(connection))
+			{
+
+				conn.Open();
+				var measure = from f in db.Foods
+							  where f.id == foodid
+							  join m in db.Measures on f.id equals m.foodid
+							  where m.id == id && id1 == m.fat
 							  select m;
 				conn.Close();
 				return measure.Single();
