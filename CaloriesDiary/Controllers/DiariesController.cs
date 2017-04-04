@@ -22,7 +22,7 @@ namespace CaloriesDiary.Controllers
 		public IQueryable<Models.Diary> Get()
 		{
 			var _username = _identityService.CurrentUser;
-			var diaries =TheRepository.getDiaries(_username);
+			var diaries =TheRepository.getDiaries(_username,this.Request);
 			return diaries;
 		}
 		public HttpResponseMessage Get(DateTime id)
@@ -45,7 +45,7 @@ namespace CaloriesDiary.Controllers
 					return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Could not create diary in body");
 				}
 				// Make sure that entry is not duplicate
-				if (TheRepository.getDiaries(_identityService.CurrentUser).Any(d => d.Date == entity.date))
+				if (TheRepository.getDiaries(_identityService.CurrentUser,this.Request).Any(d => d.Date == entity.date))
 				{
 					return Request.CreateErrorResponse(HttpStatusCode.BadRequest, " duplicate diary not allowed");
 				}
@@ -63,14 +63,14 @@ namespace CaloriesDiary.Controllers
 			catch (Exception ex)
 			{
 
-				return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Exception from catch!!!!!!!!!" + ex.StackTrace);
+				return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Exception from catch!!!!!!!!!" + ex.StackTrace+ ex.Message);
 			}
 		}
 		public HttpResponseMessage Delete(DateTime id)
 		{
 			try
 			{
-				if (!TheRepository.getDiaries(_identityService.CurrentUser).Any(e => e.Date == id))
+				if (!TheRepository.getDiaries(_identityService.CurrentUser,this.Request).Any(e => e.Date == id))
 					return Request.CreateResponse(HttpStatusCode.NotFound);
 				if (TheRepository.DeleteDiary(id))
 				{

@@ -28,7 +28,7 @@ namespace CaloriesDiary.Controllers
 			var result = new
 			{
 				NumFoods = TheRepository.getFoods().Count(),
-				NumDiaries = TheRepository.getDiaries(identityService.CurrentUser).Count()
+				NumDiaries = TheRepository.getDiaries(identityService.CurrentUser,this.Request).Count()
 			};
 
 			return Ok(result);
@@ -45,7 +45,7 @@ namespace CaloriesDiary.Controllers
 			if(id == 2)
 			{
 				return Ok(new {
-					NumDiaries = TheRepository.getDiaries(identityService.CurrentUser).Count()
+					NumDiaries = TheRepository.getDiaries(identityService.CurrentUser,this.Request).Count()
 				});
 			}
 			return NotFound();
@@ -61,7 +61,7 @@ namespace CaloriesDiary.Controllers
 			{
 				return Ok(new
 				{
-					NumDiaries = TheRepository.getDiaries(identityService.CurrentUser).Count()
+					NumDiaries = TheRepository.getDiaries(identityService.CurrentUser,this.Request).Count()
 				});
 			}
 			return NotFound();

@@ -24,11 +24,12 @@ namespace CaloriesDiary.Models
 		{
 			return new Diary()
 			{
-				Links = new List<Link>()
-				{
-					CreateLink(_urlHelper.Link("Diaries", new { id = d.date.ToString("yyyy-MM-dd") }),"self"),
-					CreateLink(_urlHelper.Link("Entries", new { diaryid = d.date.ToString("yyyy-MM-dd") }),"newDiaryEntry","POST")
-				},
+				//Links = new List<Link>()
+				//{
+				//	CreateLink(_urlHelper.Link("Diaries", new { id = d.date.ToString("yyyy-MM-dd") }),"self"),
+				//	CreateLink(_urlHelper.Link("Entries", new { diaryid = d.date.ToString("yyyy-MM-dd") }),"newDiaryEntry","POST")
+				//},
+				Links = CreateLink(_urlHelper.Link("Diaries", new { id = d.date.ToString("yyy-MM-dd") }), "self"),
 				Date = d.date,
 				Username = d.username,
 				Entries = d.DiaryEntries.Select(de => Create(de))
@@ -128,16 +129,17 @@ namespace CaloriesDiary.Models
 			try
 			{
 				var entry = new CaloriesDiary.Diary();
-				var selflink = model.Links.Where(l => l.Rel == "self").FirstOrDefault();
-				if (selflink != null && !string.IsNullOrWhiteSpace(selflink.Href))
-				{
-					var uri = new Uri(selflink.Href);
-					entry.id = int.Parse(uri.Segments.Last());
+				var selflink = model.Links;
+				//var selflink = model.Links.Where(l => l.Rel == "self").FirstOrDefault();
+				//if (selflink != null && !string.IsNullOrWhiteSpace(selflink.Href))
+				//{
+					//var uri = new Uri(selflink.Href);
+					//entry.id = int.Parse(uri.Segments.Last());
 					if (model.Date != default(DateTime))
 					{
 						entry.date = model.Date;
 					}
-				}
+				//}
 				entry.username = _identifyService.CurrentUser;
 				return entry;
 			}

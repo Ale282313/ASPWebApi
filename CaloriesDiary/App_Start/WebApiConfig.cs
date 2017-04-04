@@ -29,11 +29,11 @@ namespace CaloriesDiary.App_Start
 			config.EnsureInitialized();
 
 
-			//config.Routes.MapHttpRoute(
-			//	name: "Diaries",
-			//	routeTemplate: "api/diaries/{id}",
-			//	defaults: new { controller = "diaries", id = RouteParameter.Optional }
-			//);
+			config.Routes.MapHttpRoute(
+				name: "Diaries",
+				routeTemplate: "api/diaries/{id}",
+				defaults: new { controller = "diaries", id = RouteParameter.Optional }
+			);
 			config.Routes.MapHttpRoute(
 				name: "DiarySummary",
 				routeTemplate: "api/diaries/{id}/summary",

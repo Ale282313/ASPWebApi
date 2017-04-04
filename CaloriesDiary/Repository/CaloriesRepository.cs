@@ -5,12 +5,13 @@ using System.Linq;
 using System;
 using CaloriesDiary.Models;
 using System.Web.Http.Routing;
+using CaloriesDiary.Controllers;
+using System.Net.Http;
 
 namespace CaloriesDiary.Repository
 {
 	public class CaloriesRepository : IRepository
 	{
-
 		string connection = System.Configuration.ConfigurationManager.
 							ConnectionStrings["CaloriesDiaryEntities"].
 							ConnectionString;
@@ -77,20 +78,27 @@ namespace CaloriesDiary.Repository
 			}
 		}
 
-		public IQueryable<Models.Diary> getDiaries(string username)
+		public IQueryable<Models.Diary> getDiaries(string username,HttpRequestMessage request)
 		{
+			var _urlHelper = new UrlHelper(request);
 			using (var conn = new SqlConnection(connection))
 			{ 
 				conn.Open();
-				var diaries = db.Diaries.AsQueryable().Where(d => d.username == username).
+				var diaries = db.Diaries.AsEnumerable().Where(d => d.username == username).
 							  Select(d => new Models.Diary()
 							  {
 								  Date = d.date,
-								  Username = username
+								  Username = username,
+								  Links = new Link {
+									 Href= _urlHelper.Link("Diaries", new { id = d.date.ToString("yyy-MM-dd") }),
+									 Method="goooo",
+									 Rel ="self"
+								  }
+									  
 							  });
 
 				conn.Close();
-				return diaries;
+				return diaries.AsQueryable();
 			}
 			
 		}

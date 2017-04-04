@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Web;
 
 namespace CaloriesDiary.Repository
@@ -9,7 +10,7 @@ namespace CaloriesDiary.Repository
 	{
 		IQueryable<Food> getFoods();
 		Food getFoodItem(int id);
-		IQueryable<Models.Diary> getDiaries(string username);
+		IQueryable<Models.Diary> getDiaries(string username,HttpRequestMessage resquest);
 		Diary getDiaryItem(string username,DateTime id);
 		IEnumerable<Measure> getMeasuresForFood(int id);
 		Measure getSpecificMeasureforFood(int foodid,int id);
